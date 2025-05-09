@@ -11,6 +11,10 @@ const route = createBrowserRouter([
 				path: "article",
 				element: <Article />,
 			},
+			{
+				path: "category",
+				element: <Article />,
+			},
 		],
 	},
 ]);

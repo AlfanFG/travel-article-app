@@ -10,6 +10,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import menu from "@/data/menu";
 
 // Menu items.
 const items = [
@@ -48,12 +49,12 @@ export function AppSidebar() {
 					<SidebarGroupLabel>Application</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{items.map((item) => (
-								<SidebarMenuItem key={item.title}>
+							{menu.map((item) => (
+								<SidebarMenuItem key={item.label}>
 									<SidebarMenuButton asChild>
-										<a href={item.url}>
+										<a href={item.link}>
 											<item.icon />
-											<span>{item.title}</span>
+											<span>{item.label}</span>
 										</a>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
