@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Manrope:wght@200..800&display=swap");
 @import "tailwindcss";
+@plugin "daisyui";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -18,7 +19,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: #161a40;
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
+  --color-secondary: #5cb85c;
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -45,7 +46,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #f5f7fa;
+  --background: #ededf0;
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);

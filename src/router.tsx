@@ -5,48 +5,52 @@ import AuthLayout from "./layout/auth-layout";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 import { PrivateRoute, AuthRoute } from "./middleware";
+import Home from "./pages/home";
+import NotFound from "./pages/not-found";
+import Category from "./pages/category";
 
 const route = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <PrivateRoute>
-        <MainLayout />
-      </PrivateRoute>
-    ),
-    children: [
-      {
-        path: "",
-        element: <>Home</>,
-      },
-      {
-        path: "article",
-        element: <Article />,
-      },
-      {
-        path: "category",
-        element: <Article />,
-      },
-    ],
-  },
-  {
-    path: "/",
-    element: (
-      <AuthRoute>
-        <AuthLayout />
-      </AuthRoute>
-    ),
-    children: [
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
-      },
-    ],
-  },
+	{
+		path: "/",
+		element: (
+			<PrivateRoute>
+				<MainLayout />
+			</PrivateRoute>
+		),
+		children: [
+			{
+				path: "",
+				element: <Home />,
+			},
+			{
+				path: "article",
+				element: <Article />,
+			},
+			{
+				path: "category",
+				element: <Category />,
+			},
+			{ path: "*", element: <NotFound /> },
+		],
+	},
+	{
+		path: "/",
+		element: (
+			<AuthRoute>
+				<AuthLayout />
+			</AuthRoute>
+		),
+		children: [
+			{
+				path: "login",
+				element: <Login />,
+			},
+			{
+				path: "register",
+				element: <Register />,
+			},
+		],
+	},
 ]);
 
 export default route;
