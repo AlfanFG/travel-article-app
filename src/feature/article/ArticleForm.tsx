@@ -1,10 +1,10 @@
-import InputText from "@/components/input/input-text";
+import InputText from "@/components/input/InputText";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SelectCategory from "../category/SelectCategory";
-import InputTextArea from "@/components/input/input-textarea";
-import ImageUpload from "@/components/input/image-upload";
+import InputTextArea from "@/components/input/InputTextarea";
+import ImageUpload from "@/components/input/ImageUpload";
 import { DialogFooter } from "@/components/ui/dialog";
 import { usePostArticles } from "./hooks/usePostArticles";
 import Loading from "@/components/ui/loading";

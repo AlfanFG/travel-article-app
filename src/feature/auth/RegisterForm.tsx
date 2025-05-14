@@ -1,8 +1,8 @@
-import InputText from "@/components/input/input-text";
+import InputText from "@/components/input/InputText";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import InputPassword from "@/components/input/input-password";
+import InputPassword from "@/components/input/InputPassword";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import ErrorAlert from "@/components/ErrorAlert";
