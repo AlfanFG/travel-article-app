@@ -26,7 +26,6 @@ interface ICategoryForm {
 }
 
 export default function CategoryForm({ id, hideModal }: ICategoryForm) {
-  console.log("ewf", hideModal);
   const { data: article, isPending: IsPendingData } = useFetchCategoryById(id);
 
   const { mutate, isPending } = usePostCategory({

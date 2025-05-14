@@ -34,7 +34,7 @@ export default function CommentTable({ comments, meta }: ICommentTable) {
         enableColumnFilter: false,
       },
       {
-        accessorFn: (row) => row.user.username,
+        accessorFn: (row) => row?.user?.username,
         id: "name",
         cell: (info) => info.getValue(),
         header: () => <span>Name</span>,

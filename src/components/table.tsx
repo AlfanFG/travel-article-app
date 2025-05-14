@@ -21,6 +21,7 @@ import { CardContent, CardHeader, Card } from "./ui/card";
 import { cn } from "@/lib/utils";
 import { useGetLoading } from "@/stores/loadingStore";
 import Loading from "./ui/loading";
+import NotFound from "./NotFound";
 
 interface ITableData<T extends { id: string }> {
   table: ReactTable<T>;
@@ -75,7 +76,7 @@ export default function TableData<
                       <div className="flex flex-col gap-2">
                         {row.getVisibleCells().map((cell) => {
                           return (
-                            <p className="h-6" key={cell.id}>
+                            <p className="h-full" key={cell.id}>
                               {cell.column.id === "No"
                                 ? index + 1 + (page - 1) * pageSize
                                 : flexRender(
@@ -143,7 +144,7 @@ export default function TableData<
                   <Loading />
                 </TableCell>
               </TableRow>
-            ) : (
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => {
                 return (
                   <TableRow
@@ -169,6 +170,15 @@ export default function TableData<
                   </TableRow>
                 );
               })
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={table.getHeaderGroups()[0]?.headers.length || 1}
+                >
+                  {" "}
+                  <NotFound />
+                </TableCell>
+              </TableRow>
             )}
           </TableBody>
         </Table>

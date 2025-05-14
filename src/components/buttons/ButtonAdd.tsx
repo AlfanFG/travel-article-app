@@ -15,7 +15,7 @@ export default function ButtonAdd(props: IButtonAdd) {
       title="Add"
       onClick={click}
       className={cn(
-        `bg-green-500 hover:bg-green-500/90 flex items-center gap-2`,
+        `bg-secondary hover:bg-secondary/90 flex items-center gap-2`,
         className
       )}
     >

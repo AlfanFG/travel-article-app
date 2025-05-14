@@ -1,13 +1,13 @@
 import { useFetchArticles } from "./hooks/useFetchArticles";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FaComment, FaEdit, FaPlusCircle, FaTrash } from "react-icons/fa";
+import { FaComment, FaEdit, FaTrash } from "react-icons/fa";
 import CardInfo from "@/components/card-info";
 
 import ImageNotFound from "@/assets/image-notfound.png";
 import Loading from "@/components/ui/loading";
-import NotFound from "@/components/not-found";
-import Paginate from "@/components/paginate";
+import NotFound from "@/components/NotFound";
+import Paginate from "@/components/Pagiante";
 import ArticleForm from "./ArticleForm";
 
 import { useDeleteArticles } from "./hooks/useDeleteArticles";
@@ -15,10 +15,12 @@ import { ButtonConfirmation } from "@/components/buttons/confirmation-button";
 import useModalForm from "@/hooks/useModalForm";
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import FilterData, { type listFilter } from "@/components/filter-data";
+import FilterData, { type listFilter } from "@/components/FilterData";
 import { useSearchParams } from "react-router-dom";
 import { useArticleActions } from "@/stores/articleStore";
 import type { IArticles } from "./hooks";
+import ButtonRefresh from "@/components/buttons/ButtonRefresh";
+import ButtonAdd from "@/components/buttons/ButtonAdd";
 
 type IListArticle = {
   onTriggerScroll: () => void;
@@ -30,7 +32,11 @@ export default function ListArticle({ onTriggerScroll }: IListArticle) {
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState<string | undefined>();
   const [articleId, setArticleId] = useState("");
-  const { data: articles, isPending: isLoadArticle } = useFetchArticles({
+  const {
+    data: articles,
+    isPending: isLoadArticle,
+    refetch,
+  } = useFetchArticles({
     page,
     limit: 12,
     title: search,
@@ -50,6 +56,7 @@ export default function ListArticle({ onTriggerScroll }: IListArticle) {
       name: "article",
       placeholder: "Search by title",
       type: "text",
+      refetch: refetch,
       setFilter: setSearch,
     },
   ];
@@ -74,17 +81,14 @@ export default function ListArticle({ onTriggerScroll }: IListArticle) {
         <div className="flex flex-col xl:flex-row gap-4 w-full">
           <FilterData listFilter={listFilter} />
         </div>
-        <Button
-          onClick={() => {
-            showModal();
-          }}
-          name="modal-article"
-          title="Add Article"
-          className="bg-secondary hover:bg-secondary/90 w-full sm:w-fit"
-        >
-          <FaPlusCircle />
-          <span>Add Article</span>
-        </Button>
+        <div className="flex gap-2">
+          <ButtonRefresh onClick={refetch} />
+          <ButtonAdd
+            text="Add Article"
+            click={showModal}
+            className="flex items-center gap-2 w-full sm:w-fit"
+          />
+        </div>
       </div>
       {(isLoadArticle || isPendingDelete) && <Loading />}
 

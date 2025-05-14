@@ -1,4 +1,4 @@
-import CommentBox from "@/components/comment-box";
+import CommentBox from "@/components/CommentBox";
 import RichTextBox from "@/components/input/rich-text-box";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";

@@ -1,6 +1,6 @@
 import ListArticle from "@/feature/article/ListArticle";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import PreviewArticle from "./preview-article";
+import PreviewArticle from "./PreviewArticle";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";

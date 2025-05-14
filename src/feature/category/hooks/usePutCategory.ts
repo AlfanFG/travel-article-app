@@ -21,7 +21,7 @@ export const usePutCategory = ({
     mutationFn: putCategory,
     onSuccess: () => {
       queryCLient.invalidateQueries({
-        queryKey: ["category"],
+        queryKey: ["categories"],
       });
       console.log("success");
       afterSuccess();

@@ -9,6 +9,7 @@ interface IFetchComments {
   limit?: number;
   articleDocId?: string;
   populateUser?: boolean;
+  populateArticle?: boolean;
   content?: string;
 }
 
@@ -17,6 +18,7 @@ const fetchComments = async ({
   limit,
   articleDocId,
   populateUser,
+  populateArticle,
   content,
 }: Partial<IFetchComments>) => {
   try {
@@ -24,12 +26,12 @@ const fetchComments = async ({
       "/comments",
       {
         params: {
-          "pagination[page]": page,
-          "pagination[pageSize]": limit,
+          "pagination[page]": !content ? page : undefined,
+          "pagination[pageSize]": !content ? limit : undefined,
           "filters[article][documentId][$eqi]": articleDocId || undefined,
           "filters[content][$containsi]": content || undefined,
           "populate[user]": populateUser ? "*" : undefined,
-          "populate[article]": articleDocId ? "*" : undefined,
+          "populate[article]": populateArticle ? "*" : undefined,
         },
       }
     );
@@ -51,12 +53,28 @@ export const useFetchComments = ({
   limit,
   articleDocId,
   populateUser,
+  populateArticle,
   content,
 }: Partial<IFetchComments>) => {
   return useQuery({
-    queryKey: ["comments", page, limit, articleDocId, populateUser, content],
+    queryKey: [
+      "comments",
+      page,
+      limit,
+      articleDocId,
+      populateUser,
+      populateArticle,
+      content,
+    ],
     queryFn: () =>
-      fetchComments({ page, limit, articleDocId, populateUser, content }),
+      fetchComments({
+        page,
+        limit,
+        articleDocId,
+        populateUser,
+        populateArticle,
+        content,
+      }),
     refetchOnWindowFocus: false,
     retry: 1,
     retryDelay: 1000,

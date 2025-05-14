@@ -24,6 +24,7 @@ interface IInputText<T extends FieldValues> {
   className?: string;
   value?: string | undefined;
   searchIcon?: boolean;
+  refetch?: (() => void) | undefined;
   debounced?: number; // Optional delay for debounce
 }
 
@@ -37,6 +38,7 @@ export default function InputText<T extends FieldValues>({
   error,
   className,
   onChange,
+  refetch,
   hook = false,
   searchIcon = false,
   debounced = 300, // Default debounce delay if none is provided
@@ -85,6 +87,7 @@ export default function InputText<T extends FieldValues>({
               size="sm"
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
               aria-label={"search article"}
+              onClick={() => refetch && refetch()}
             >
               <FaSearch className="text-secondary" />
             </Button>

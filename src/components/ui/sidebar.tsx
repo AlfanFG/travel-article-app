@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { RiArrowLeftWideFill, RiArrowRightWideFill } from "react-icons/ri";
+import useResponsive from "@/hooks/useResponsive";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -257,6 +258,7 @@ function SidebarTrigger({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { toggleSidebar, open } = useSidebar();
+  const { isMobile } = useResponsive();
 
   return (
     <Button
@@ -265,7 +267,8 @@ function SidebarTrigger({
       variant="default"
       size="icon"
       className={cn(
-        "size-7 my-4 cursor-pointer absolute left-0 z-50",
+        "size-7 my-4 cursor-pointer absolute z-50",
+        isMobile ? "left-5" : "left-0",
         open ? "-ml-4" : "ml-1",
         className
       )}
@@ -275,7 +278,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      {open ? <RiArrowRightWideFill /> : <RiArrowLeftWideFill />}
+      {open ? <RiArrowLeftWideFill /> : <RiArrowRightWideFill />}
 
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
