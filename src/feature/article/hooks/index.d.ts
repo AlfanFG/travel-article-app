@@ -1,3 +1,5 @@
+import type { ICategory } from "@/feature/category/hooks";
+
 export interface IArticles {
 	id: string;
 	documentId: string;

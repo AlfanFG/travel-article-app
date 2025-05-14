@@ -4,13 +4,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SelectCategory from "../category/SelectCategory";
 import InputTextArea from "@/components/input/input-textarea";
-import ImageUpload from "@/components/input/image-ipload";
+import ImageUpload from "@/components/input/image-upload";
 import { DialogFooter } from "@/components/ui/dialog";
 import { usePostArticles } from "./hooks/usePostArticles";
 import Loading from "@/components/ui/loading";
 import type { ArticlesProps } from "./hooks";
 import { useFetchArticleById } from "./hooks/useFetchArticlesById";
 import { usePutArticles } from "./hooks/usePutArticles";
+import API from "@/api/api";
+import { useState } from "react";
 
 export const articleSchema = z.object({
 	title: z.string().min(1, { message: "Title is required!" }),
@@ -20,37 +22,63 @@ export const articleSchema = z.object({
 });
 
 interface IArticleForm {
-	id: string;
+	id?: string | undefined;
+	hideModal: () => void;
 }
 
-export default function ArticleForm({ id }: IArticleForm) {
+export default function ArticleForm({ id, hideModal }: IArticleForm) {
+	const [loading, setIsLoading] = useState(false);
 	const { data: article, isPending: IsPendingData } = useFetchArticleById(id);
-	const { mutate, isPending } = usePostArticles();
-	const { mutate: mutatePut, isPending: isUpdatePending } = usePutArticles();
+	const { mutate: mutatePost, isPending } = usePostArticles({
+		afterSuccess: hideModal,
+	});
+	const { mutate: mutatePut, isPending: isUpdatePending } = usePutArticles({
+		afterSuccess: hideModal,
+	});
 
 	const { control, formState, handleSubmit, setValue, getValues, watch } =
 		useForm({
 			values: {
 				title: article?.data?.title || "",
 				description: article?.data?.description || "",
-				category: String(article?.data?.category || ""), // Convert category to string
+				category: article?.data?.category?.id || "", // Convert category to string
 				cover_image_url: article?.data?.cover_image_url || "",
 			},
 			// resolver: zodResolver(articleSchema),
 		});
 
 	const { errors } = formState;
+	const uploadImage = async (file: File) => {
+		setIsLoading(true);
+		if (!file) return;
+
+		const formData = new FormData();
+		formData.append("files", file);
+
+		try {
+			const response = await API.post("/upload", formData);
+			setIsLoading(false);
+			return response.data[0].url || "";
+		} catch (error) {
+			setIsLoading(false);
+			console.error("Upload failed:", error);
+		}
+	};
+
 	const onSubmit = async (values: ArticlesProps) => {
+		const imageUrl =
+			typeof values.cover_image_url === "string"
+				? values.cover_image_url
+				: await uploadImage(values.cover_image_url);
+
 		if (id) {
-			mutatePut({ data: { ...values }, documentId: id });
+			mutatePut({
+				data: { ...values, cover_image_url: imageUrl },
+				documentId: id,
+			});
 		} else {
-			mutate({
-				data: {
-					data: {
-						...values,
-						category: String(values.category), // Ensure category is a string
-					},
-				},
+			mutatePost({
+				data: { ...values, cover_image_url: imageUrl },
 			});
 		}
 	};
@@ -63,6 +91,10 @@ export default function ArticleForm({ id }: IArticleForm) {
 			className="flex flex-col gap-2 w-full"
 		>
 			<div className="flex flex-col gap-6 w-full px-6 pb-12 pt-4 relative">
+				<ImageUpload
+					value={watch("cover_image_url") && getValues("cover_image_url")}
+					onChange={(value) => setValue("cover_image_url", value)}
+				/>
 				<InputText
 					id="title"
 					error={errors?.title?.message}
@@ -89,19 +121,18 @@ export default function ArticleForm({ id }: IArticleForm) {
 					control={control}
 					hook
 				/>
-
-				<ImageUpload
-					value={watch("cover_image_url") && getValues("cover_image_url")}
-					onChange={(value) => setValue("cover_image_url", value)}
-				/>
 			</div>
 			<DialogFooter className="absolute bottom-2 right-0 w-full px-12 bg-white p-4">
 				<Button
-					disabled={isPending && isUpdatePending}
+					disabled={isPending && isUpdatePending && loading}
 					className="w-full"
 					type="submit"
 				>
-					{isPending ? <Loading /> : <span>Submit</span>}
+					{isPending || isUpdatePending || loading ? (
+						<Loading />
+					) : (
+						<span>Submit</span>
+					)}
 				</Button>
 			</DialogFooter>
 		</form>

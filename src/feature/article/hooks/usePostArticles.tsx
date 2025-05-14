@@ -6,11 +6,15 @@ import API from "@/api/api";
 import type { PostArticlesProps } from ".";
 import { useOpenModal } from "@/stores/modalStore";
 
-const postArticles = async ({ data }: { data: PostArticlesProps }) => {
-	return await API.post("/articles", data);
+const postArticles = async ({ data }: PostArticlesProps) => {
+	return await API.post("/articles", { data });
 };
 
-export const usePostArticles = () => {
+export const usePostArticles = ({
+	afterSuccess,
+}: {
+	afterSuccess: () => void;
+}) => {
 	const openModal = useOpenModal();
 	const queryCLient = useQueryClient();
 
@@ -20,7 +24,7 @@ export const usePostArticles = () => {
 			queryCLient.invalidateQueries({
 				queryKey: ["articles"],
 			});
-
+			afterSuccess();
 			toast.success(`Articles has been added successfully!`);
 		},
 		onError: (

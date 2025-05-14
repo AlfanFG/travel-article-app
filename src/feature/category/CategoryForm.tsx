@@ -1,0 +1,96 @@
+import InputText from "@/components/input/input-text";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import InputTextArea from "@/components/input/input-textarea";
+
+import { DialogFooter } from "@/components/ui/dialog";
+
+import Loading from "@/components/ui/loading";
+
+import { useFetchCategoryById } from "./hooks/useFetchCategoryById";
+import type { CategoryProps } from "./hooks";
+import { usePutCategory } from "./hooks/usePutCategory";
+import { useOpenModal } from "@/stores/modalStore";
+import { usePostCategory } from "./hooks/usePostCategory";
+
+export const categorySchema = z.object({
+	name: z.string().min(1, { message: "Name is required!" }),
+	description: z.string(),
+});
+
+interface ICategoryForm {
+	id?: string | undefined;
+}
+
+export default function CategoryForm({ id }: ICategoryForm) {
+	console.log(id);
+	const { data: article, isPending: IsPendingData } = useFetchCategoryById(id);
+	const setOpenModal = useOpenModal();
+	const { mutate, isPending } = usePostCategory(() => setOpenModal(false));
+	const { mutate: mutatePut, isPending: isUpdatePending } = usePutCategory(() =>
+		setOpenModal(false)
+	);
+
+	const { control, formState, handleSubmit } = useForm({
+		values: {
+			name: article?.data?.name || "",
+			description: article?.data?.description || "",
+		},
+		// resolver: zodResolver(categorySchema),
+	});
+
+	const { errors } = formState;
+	const onSubmit = async (values: CategoryProps) => {
+		if (id) {
+			mutatePut({ data: { ...values }, documentId: id });
+		} else {
+			mutate({
+				data: {
+					...values,
+				},
+			});
+		}
+	};
+
+	return IsPendingData && id ? (
+		<Loading />
+	) : (
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			className="flex flex-col gap-2 w-full"
+		>
+			<div className="flex flex-col gap-6 w-full px-6 pb-12 pt-4 relative">
+				<InputText
+					id="name"
+					error={errors?.name?.message}
+					name="name"
+					label="Name"
+					placeholder="Add category name"
+					control={control}
+					hook
+				/>
+
+				<InputTextArea
+					id="description"
+					error={errors?.description?.message}
+					name="description"
+					label="Description"
+					placeholder="Add category description"
+					control={control}
+					hook
+				/>
+			</div>
+			<DialogFooter className="absolute bottom-2 right-0 w-full px-12 bg-white p-4">
+				<Button
+					disabled={isPending && isUpdatePending}
+					className="w-full"
+					type="submit"
+				>
+					{isPending ? <Loading /> : <span>Submit</span>}
+				</Button>
+			</DialogFooter>
+		</form>
+	);
+}

@@ -1,33 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { AxiosError } from "axios";
-import type { PutArticlesProps } from ".";
-import API from "@/api/api";
 import { toast } from "react-toastify";
-import { useOpenModal } from "@/stores/modalStore";
+import { AxiosError } from "axios";
+import API from "@/api/api";
 
-const putArticles = ({ documentId, data }: PutArticlesProps) => {
-	return API.put(`/articles/${documentId}`, {
-		data: { ...data, category: data.category || undefined },
-	});
+import type { CategoryProps } from ".";
+
+const postCategory = async ({ data }: { data: CategoryProps }) => {
+	return await API.post("/categories", data);
 };
 
-export const usePutArticles = ({
-	afterSuccess,
-}: {
-	afterSuccess: () => void;
-}) => {
-	const openModal = useOpenModal();
+export const usePostCategory = (afterSuccess: () => void) => {
 	const queryCLient = useQueryClient();
 
 	return useMutation({
-		mutationFn: putArticles,
+		mutationFn: postCategory,
 		onSuccess: () => {
 			queryCLient.invalidateQueries({
-				queryKey: ["articles"],
+				queryKey: ["categories"],
 			});
 			afterSuccess();
-			toast.success(`Articles has been updated successfully!`);
+			toast.success(`Category has been added successfully!`);
 		},
 		onError: (
 			error: AxiosError<{
@@ -42,9 +35,6 @@ export const usePutArticles = ({
 					<li key={item.message}>{item.message}</li>
 				)) || error.response?.data?.error?.message;
 			toast.error(<ul>{errorMessage}</ul>);
-		},
-		onSettled: () => {
-			openModal(false);
 		},
 	});
 };
