@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "./breadcrumbs";
-import Dropdown from "./Dropdown";
+import Dropdown from "./dropdown";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import useConfirmationModal from "@/hooks/useConfimationModal";
