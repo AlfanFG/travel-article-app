@@ -13,7 +13,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <SidebarTrigger />
         <Navbar />
-
         {children}
       </SidebarInset>
     </SidebarProvider>
