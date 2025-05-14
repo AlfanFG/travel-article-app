@@ -1,9 +1,9 @@
-import InputText from "@/components/input/input-text";
+import InputText from "@/components/input/InputText";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import InputTextArea from "@/components/input/input-textarea";
+import InputTextArea from "@/components/input/InputTextarea";
 
 import { DialogFooter } from "@/components/ui/dialog";
 

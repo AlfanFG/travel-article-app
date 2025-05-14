@@ -1,4 +1,4 @@
-import InputSelect from "@/components/input/input-select";
+import InputSelect from "@/components/input/InputSelect";
 import { useFetchCategory } from "./hooks/useFetchCategory";
 import type { Control, FieldValues } from "react-hook-form";
 

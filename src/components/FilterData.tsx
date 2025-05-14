@@ -1,6 +1,6 @@
 import SelectCategory from "@/feature/category/SelectCategory";
-import InputSelect from "./input/input-select";
-import InputText from "./input/input-text";
+import InputSelect from "./input/InputSelect";
+import InputText from "./input/InputText";
 import type { SetStateAction } from "react";
 
 export interface IFilterData {
