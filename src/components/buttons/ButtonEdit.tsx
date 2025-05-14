@@ -3,16 +3,18 @@ import { Button } from "../ui/button";
 
 interface IButtonEdit {
   onClick: () => void;
+  text?: string;
 }
 
-export default function ButtonEdit({ onClick }: IButtonEdit) {
+export default function ButtonEdit({ onClick, text }: IButtonEdit) {
   return (
     <Button
       title="Edit"
       onClick={onClick}
-      className="bg-yellow-400 hover:bg-yellow-300"
+      className="bg-yellow-400 hover:bg-yellow-400/80 flex gap-2"
     >
       <FaEdit />
+      {text}
     </Button>
   );
 }

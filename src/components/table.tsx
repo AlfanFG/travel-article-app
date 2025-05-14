@@ -4,6 +4,7 @@ import {
   type Column,
   type Table as ReactTable,
   flexRender,
+  type ColumnMeta,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -14,31 +15,34 @@ import {
   TableRow,
 } from "./ui/table";
 import { usePageIndex, usePageSize } from "@/stores/paginationStore";
-
 import PaginationTools from "./PaginationTools";
 import useResponsive from "@/hooks/useResponsive";
 import { CardContent, CardHeader, Card } from "./ui/card";
+import { cn } from "@/lib/utils";
+import { useGetLoading } from "@/stores/loadingStore";
+import Loading from "./ui/loading";
 
-interface ITableData<T> {
+interface ITableData<T extends { id: string }> {
   table: ReactTable<T>;
   totalData: number;
   totalPage: number;
+  isPendingRow?: boolean;
+  currentId?: string;
 }
 
-export default function TableData<T>({
-  table,
-  totalData,
-  totalPage,
-}: ITableData<T>) {
+export default function TableData<
+  T extends { id: string; documentId: string }
+>({ table, totalData, totalPage, isPendingRow, currentId }: ITableData<T>) {
+  const isLoading = useGetLoading();
   const page = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
   const setPageIndex = usePageIndex();
   const setPageSize = usePageSize();
-  const { isTabletOrMobile } = useResponsive();
+  const { isMobile } = useResponsive();
 
   return (
     <div className="p-2">
-      {isTabletOrMobile ? (
+      {isMobile ? (
         <div className="flex flex-col gap-4">
           {table.getRowModel().rows.map((row, index) => {
             return (
@@ -49,22 +53,23 @@ export default function TableData<T>({
                     <div className="flex gap-4" key={headerGroup.id}>
                       <div className="flex flex-col gap-2">
                         {headerGroup.headers.map((header) => {
-                          return (
-                            <div
-                              key={header.id}
-                              className="flex gap-4 justify-between"
-                            >
-                              <p className="h-6 self-start">
-                                {header.isPlaceholder
-                                  ? null
-                                  : flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext()
-                                    )}
-                              </p>
-                              <span> : </span>
-                            </div>
-                          );
+                          if (header.id !== "action")
+                            return (
+                              <div
+                                key={header.id}
+                                className="flex gap-4 justify-between"
+                              >
+                                <p className="h-6 self-start">
+                                  {header.isPlaceholder
+                                    ? null
+                                    : flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                      )}
+                                </p>
+                                <span> : </span>
+                              </div>
+                            );
                         })}
                       </div>
                       <div className="flex flex-col gap-2">
@@ -129,24 +134,42 @@ export default function TableData<T>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.map((row, index) => {
-              return (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <TableCell key={cell.id}>
-                        {cell.column.id === "No"
-                          ? index + 1 + (page - 1) * pageSize
-                          : flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  className="text-center p-4"
+                  colSpan={table.getHeaderGroups()[0]?.headers.length || 1}
+                >
+                  <Loading />
+                </TableCell>
+              </TableRow>
+            ) : (
+              table.getRowModel().rows.map((row, index) => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    className={cn(
+                      isPendingRow &&
+                        currentId === row.original.documentId &&
+                        `opacity-60`
+                    )}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell key={cell.id}>
+                          {cell.column.id === "No"
+                            ? index + 1 + (page - 1) * pageSize
+                            : flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       )}
@@ -167,10 +190,16 @@ export default function TableData<T>({
     </div>
   );
 }
+type FilterVariant = "range" | "select" | "text";
 
-function Filter({ column }: { column: Column<any, unknown> }) {
+interface CustomColumnMeta<TData = unknown, TValue = unknown>
+  extends ColumnMeta<TData, TValue> {
+  filterVariant?: FilterVariant;
+}
+
+function Filter<T>({ column }: { column: Column<T, unknown> }) {
   const columnFilterValue = column.getFilterValue();
-  const { filterVariant } = column.columnDef.meta ?? {};
+  const { filterVariant } = (column.columnDef.meta as CustomColumnMeta) ?? {};
 
   return filterVariant === "range" ? (
     <div>

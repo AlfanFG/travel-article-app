@@ -1,17 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AxiosError } from "axios";
-import type { PutArticlesProps } from ".";
+
 import API from "@/api/api";
 import { toast } from "react-toastify";
+import type { PutCategoryProps } from ".";
 
-const putArticles = ({ documentId, data }: PutArticlesProps) => {
-  return API.put(`/articles/${documentId}`, {
-    data: { ...data, category: data.category || undefined },
-  });
+const putCategory = ({ documentId, data }: PutCategoryProps) => {
+  return API.put(`/categories/${documentId}`, { data });
 };
 
-export const usePutArticles = ({
+export const usePutCategory = ({
   afterSuccess,
 }: {
   afterSuccess: () => void;
@@ -19,13 +18,14 @@ export const usePutArticles = ({
   const queryCLient = useQueryClient();
 
   return useMutation({
-    mutationFn: putArticles,
+    mutationFn: putCategory,
     onSuccess: () => {
       queryCLient.invalidateQueries({
-        queryKey: ["articles"],
+        queryKey: ["category"],
       });
+      console.log("success");
       afterSuccess();
-      toast.success(`Articles has been updated successfully!`);
+      toast.success(`Categories has been updated successfully!`);
     },
     onError: (
       error: AxiosError<{
@@ -36,10 +36,11 @@ export const usePutArticles = ({
       }>
     ) => {
       const errorMessage =
-        error.response?.data?.error?.details?.errors?.map((item) => (
-          <li key={item.message}>{item.message}</li>
-        )) || error.response?.data?.error?.message;
-      toast.error(<ul>{errorMessage}</ul>);
+        error.response?.data?.error?.details?.errors?.map(
+          (item) => `<li key={${item.message}}>${item.message}</li>`
+        ) || error.response?.data?.error?.message;
+
+      toast.error(`<ul>${errorMessage}</ul>`);
     },
   });
 };

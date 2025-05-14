@@ -19,7 +19,11 @@ const fetchCategory = async (
         },
       }
     );
-    return { success: true, data: response.data };
+    return {
+      success: true,
+      data: response.data.data,
+      meta: response.data.meta,
+    };
   } catch (err: any) {
     const message =
       err.response?.data?.error?.message ||

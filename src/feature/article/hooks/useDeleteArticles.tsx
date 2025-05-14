@@ -4,41 +4,36 @@ import { AxiosError } from "axios";
 
 import API from "@/api/api";
 import { toast } from "react-toastify";
-import { useOpenModal } from "@/stores/modalStore";
 
 const deleteArticles = ({ documentId }: { documentId: string }) => {
-	return API.delete(`/articles/${documentId}`);
+  return API.delete(`/articles/${documentId}`);
 };
 
 export const useDeleteArticles = () => {
-	const openModal = useOpenModal();
-	const queryCLient = useQueryClient();
+  const queryCLient = useQueryClient();
 
-	return useMutation({
-		mutationFn: deleteArticles,
-		onSuccess: () => {
-			queryCLient.invalidateQueries({
-				queryKey: ["articles"],
-			});
+  return useMutation({
+    mutationFn: deleteArticles,
+    onSuccess: () => {
+      queryCLient.invalidateQueries({
+        queryKey: ["articles"],
+      });
 
-			toast.success(`Articles has been deleted successfully!`);
-		},
-		onError: (
-			error: AxiosError<{
-				error: {
-					details?: { errors?: { message: string }[] };
-					message: string;
-				};
-			}>
-		) => {
-			const errorMessage =
-				error.response?.data?.error?.details?.errors?.map((item) => (
-					<li key={item.message}>{item.message}</li>
-				)) || error.response?.data?.error?.message;
-			toast.error(<ul>{errorMessage}</ul>);
-		},
-		onSettled: () => {
-			openModal(false);
-		},
-	});
+      toast.success(`Articles has been deleted successfully!`);
+    },
+    onError: (
+      error: AxiosError<{
+        error: {
+          details?: { errors?: { message: string }[] };
+          message: string;
+        };
+      }>
+    ) => {
+      const errorMessage =
+        error.response?.data?.error?.details?.errors?.map((item) => (
+          <li key={item.message}>{item.message}</li>
+        )) || error.response?.data?.error?.message;
+      toast.error(<ul>{errorMessage}</ul>);
+    },
+  });
 };
