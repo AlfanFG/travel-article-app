@@ -1,5 +1,5 @@
 import CommentBox from "@/components/CommentBox";
-import RichTextBox from "@/components/input/rich-text-box";
+import RichTextBox from "@/components/input/RichTextBox";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
 import { Separator } from "@/components/ui/separator";
