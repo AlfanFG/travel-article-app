@@ -81,7 +81,7 @@ export default function ListArticle({ onTriggerScroll }: IListArticle) {
         <div className="flex flex-col xl:flex-row gap-4 w-full">
           <FilterData listFilter={listFilter} />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full justify-end pl-10">
           <ButtonRefresh onClick={refetch} />
           <ButtonAdd
             text="Add Article"
